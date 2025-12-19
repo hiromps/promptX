@@ -42,9 +42,14 @@ export default function App() {
     });
 
     // 2. Local Storage
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved) {
-      setPrompts(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        setPrompts(JSON.parse(saved));
+      }
+    } catch (err) {
+      console.error("Local storage load failed:", err);
+      showToast('データの読み込みに失敗しました');
     }
 
     // 3. Share Preview
@@ -322,8 +327,11 @@ function Editor({ data, onSave, onDelete, onShare, onCancel, onToggleFavorite, o
 
   const addTag = (e) => {
     if (e.key === 'Enter' && tagInput.trim()) {
-      setFormData({ ...formData, tags: [...new Set([...formData.tags, tagInput.trim()])] });
-      setTagInput('');
+      const newTag = tagInput.trim().replace(/^#/, ''); // Remove leading # if present
+      if (newTag) {
+        setFormData({ ...formData, tags: [...new Set([...formData.tags, newTag])] });
+        setTagInput('');
+      }
     }
   };
 
