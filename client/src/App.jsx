@@ -3,7 +3,7 @@ import {
   Copy, Plus, Search, Trash2, Moon, Sun, Check, Tag, X, Share, ArrowLeft, Globe, Loader2, Star, Download, Upload, ExternalLink
 } from 'lucide-react';
 import {
-  auth, db, appId,
+  auth, db,
   signInAnonymously, onAuthStateChanged,
   collection, addDoc, getDoc, doc, serverTimestamp
 } from './firebase';
@@ -71,8 +71,8 @@ export default function App() {
   const fetchSharedPrompt = async (id) => {
     setLoading(true);
     try {
-      // Data is stored in: artifacts / {appId} / public / data / prompts
-      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'prompts', id);
+      // Simplied path for user's own Firebase project
+      const docRef = doc(db, 'prompts', id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setSharedPromptData({ id: docSnap.id, ...docSnap.data() });
@@ -152,7 +152,7 @@ export default function App() {
     }
     try {
       showToast('シエアURLを発行中...');
-      const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'prompts');
+      const collectionRef = collection(db, 'prompts');
       const docRef = await addDoc(collectionRef, {
         title: prompt.title || '無題のプロンプト',
         content: prompt.content,
