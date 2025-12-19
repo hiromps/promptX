@@ -2,21 +2,28 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDoc, doc, serverTimestamp } from "firebase/firestore";
 
-// These variables are often provided by the hosting environment for this project type
-const firebaseConfig = typeof __firebase_config !== 'undefined'
-    ? JSON.parse(__firebase_config)
+// Access global variables that might be injected by the environment
+const getGlobal = (key) => {
+    if (typeof window !== 'undefined' && window[key]) return window[key];
+    if (typeof globalThis !== 'undefined' && globalThis[key]) return globalThis[key];
+    return undefined;
+};
+
+const rawConfig = getGlobal('__firebase_config');
+const firebaseConfig = rawConfig
+    ? (typeof rawConfig === 'string' ? JSON.parse(rawConfig) : rawConfig)
     : {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "MISSING",
+        authDomain: "MISSING",
+        projectId: "MISSING",
+        storageBucket: "MISSING",
+        messagingSenderId: "MISSING",
+        appId: "MISSING"
     };
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+export const appId = getGlobal('__app_id') || 'default-app-id';
 
 export { signInAnonymously, onAuthStateChanged, collection, addDoc, getDoc, doc, serverTimestamp };

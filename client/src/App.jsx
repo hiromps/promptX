@@ -27,9 +27,12 @@ export default function App() {
     // 1. Auth Initialization
     const initAuth = async () => {
       try {
+        console.log("Starting anonymous auth...");
         await signInAnonymously(auth);
+        console.log("Auth success");
       } catch (err) {
         console.error("Auth failed:", err);
+        showToast('認証に失敗しました。ページを再読み込みしてください。');
       }
     };
     initAuth();
